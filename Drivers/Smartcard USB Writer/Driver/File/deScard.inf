@@ -1,0 +1,211 @@
+; DE-PCSC0702.INF
+; Copyright (c) 2008 Duali.Inc
+
+[Version]
+DriverVer=11/30/2008,1.0.1.0
+Signature="$Windows NT$"
+Class=SmartCardReader
+ClassGuid={50DD5230-BA8A-11D1-BF5D-0000F805F530}
+Provider=%DUALI%
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SmartCardReaderClassReg 
+
+[SmartCardReaderClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-25
+HKLM,"\Software\Microsoft\Cryptography\Calais\Readers",,,
+
+[Manufacturer]
+%DUALI%=DUALI
+
+[DUALI]
+; DisplayName       Section     DeviceId
+; -----------       -------     --------
+;%DUALI.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0631&MI_00
+%USB\VID_1DB2&PID_0631&MI_00.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0631&MI_00
+%USB\VID_1DB2&PID_0632.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0632
+%USB\VID_1DB2&PID_063B.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_063B
+%USB\VID_1DB2&PID_063C&MI_00.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_063C&MI_00
+%USB\VID_1DB2&PID_0636.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0636
+%USB\VID_1DB2&PID_0637&MI_00.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0637&MI_00
+;%DUALI.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0641&MI_00
+%USB\VID_1DB2&PID_0641.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0641
+
+%USB\VID_1DB2&PID_0651.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0651
+
+%USB\VID_1DB2&PID_0701&MI_00.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0701&MI_00
+;----------------------------------------------------------------------------------------------------
+
+;%DUALI.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0631&MI_01
+%USB\VID_1DB2&PID_0631&MI_01.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0631&MI_01
+%USB\VID_1DB2&PID_0637&MI_01.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0637&MI_01
+%USB\VID_1DB2&PID_063C&MI_01.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_063C&MI_01
+;%DUALI.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0641&MI_01
+%USB\VID_1DB2&PID_0641&MI_01.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0641&MI_01
+
+%USB\VID_1DB2&PID_0701&MI_01.DeviceDesc_Contact% = DUALI.Install_Contact, USB\VID_1DB2&PID_0701&MI_01
+;----------------------------------------------------------------------------------------------------
+
+;%DUALI.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_0631&MI_02
+%USB\VID_1DB2&PID_0631&MI_02.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_0631&MI_02
+%USB\VID_1DB2&PID_063C&MI_02.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_063C&MI_02
+
+;%DUALI.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_0641&MI_02
+%USB\VID_1DB2&PID_0641&MI_02.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_0641&MI_02
+%USB\VID_1DB2&PID_0701&MI_02.DeviceDesc_Sam% = DUALI.Install_Sam, USB\VID_1DB2&PID_0701&MI_02
+;----------------------------------------------------------------------------------------------------
+[SourceDisksNames]
+1 = "DE-PCSC Contactless Reader",,,""
+1 = "DE-PCSC Contact Reader", deScard1.sys,,
+1 = "DE-PCSC Sam Reader", deScard2.sys,,
+[SourceDisksFiles]
+deScard0.sys = 1
+deScard1.sys = 1
+deScard2.sys = 1
+[DestinationDirs]
+DUALI.Install.CopyFiles = 10,\System32\Drivers
+DUALI.Install_Contact.CopyFiles = 10,\System32\Drivers
+DUALI.Install_Sam.CopyFiles = 10,\System32\Drivers
+; ================= contactless =====================
+[DUALI.Install.NT]
+AddReg          = DUALI.Install.AddReg
+CopyFiles	= DUALI.Install.CopyFiles
+
+[DUALI.Install.AddReg]
+HKR,, AdapterType, 0, "0100"
+HKR,,"VendorName",0,%Vendor%
+HKR,,"IFDName",0,%Reader%
+HKR,,"ReadTimeout",0,%Timeout%
+HKR,,"CardType",0,%CardType%
+HKR,,"CommandMode",0,%CmdMode%
+HKLM,"System\CurrentControlSet\Services\SCardSvr","Start", 0x00010001,2
+
+[DUALI.Install.CopyFiles]
+deScard0.sys,,,2
+
+[DUALI.Install.NT.Services]
+AddService = DESCARD0-SERVICE, 2, DUALI.Service, DUALI.EventLog
+
+[DUALI.Service]
+DisplayName     = %DUALI.DeviceDesc%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\deScard0.sys
+
+[DUALI.EventLog]
+AddReg = DUALI.AddEventLog.reg
+
+[DUALI.AddEventLog.reg]
+HKR,, EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\drivers\deScard0.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+; ================= contact =====================
+[DUALI.Install_Contact.NT]
+AddReg          = DUALI.Install_Contact.AddReg
+CopyFiles	= DUALI.Install_Contact.CopyFiles
+
+[DUALI.Install_Contact.AddReg]
+HKR,, AdapterType, 0, "0100"
+HKR,,"VendorName",0,%Vendor%
+HKR,,"IFDName",0,%Reader%
+HKR,,"ReadTimeout",0,%Timeout%
+HKR,,"CardType",0,%CardType%
+HKR,,"CommandMode",0,%CmdMode%
+HKLM,"System\CurrentControlSet\Services\SCardSvr","Start", 0x00010001,2
+
+[DUALI.Install_Contact.CopyFiles]
+deScard1.sys,,,2
+
+[DUALI.Install_Contact.NT.Services]
+AddService = DESCARD1-SERVICE, 2, DUALI.Service_Contact, DUALI.EventLog_Contact
+
+[DUALI.Service_Contact]
+DisplayName     = %DUALI.DeviceDesc_Contact%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\deScard1.sys
+
+[DUALI.EventLog_Contact]
+AddReg = DUALI.AddEventLog_Contact.reg
+
+[DUALI.AddEventLog_Contact.reg]
+HKR,, EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\drivers\deScard1.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+
+; ================= Sam =====================
+[DUALI.Install_Sam.NT]
+AddReg          = DUALI.Install_Sam.AddReg
+CopyFiles	= DUALI.Install_Sam.CopyFiles
+
+[DUALI.Install_Sam.AddReg]
+HKR,, AdapterType, 0, "0100"
+HKR,,"VendorName",0,%Vendor%
+HKR,,"IFDName",0,%Reader%
+HKR,,"ReadTimeout",0,%Timeout%
+HKR,,"CardType",0,%CardType%
+HKR,,"CommandMode",0,%CmdMode%
+HKLM,"System\CurrentControlSet\Services\SCardSvr","Start", 0x00010001,2
+
+[DUALI.Install_Sam.CopyFiles]
+deScard2.sys,,,2
+
+[DUALI.Install_Sam.NT.Services]
+AddService = DESCARD2-SERVICE, 2, DUALI.Service_Sam, DUALI.EventLog_Sam
+
+[DUALI.Service_Sam]
+DisplayName     = %DUALI.DeviceDesc_Sam%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\deScard2.sys
+
+[DUALI.EventLog_Sam]
+AddReg = DUALI.AddEventLog_Sam.reg
+
+[DUALI.AddEventLog_Sam.reg]
+HKR,, EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\drivers\deScard2.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+; ================= Strings =====================
+
+[Strings]
+DUALI				= "DUALI"
+;rf-----------------------------------------------------------------------------------
+USB\VID_1DB2&PID_0631&MI_00.DeviceDesc		= "DE-620 Contactless Reader"
+USB\VID_1DB2&PID_0632.DeviceDesc			= "DE-620 Contactless Reader"
+USB\VID_1DB2&PID_0636.DeviceDesc			= "DE-620L Contactless Reader"
+USB\VID_1DB2&PID_0637&MI_00.DeviceDesc		= "DE-620L Contactless Reader"
+USB\VID_1DB2&PID_063B.DeviceDesc			= "DE-620R Contactless Reader"
+USB\VID_1DB2&PID_063C&MI_00.DeviceDesc		= "DE-620R Contactless Reader"
+USB\VID_1DB2&PID_0641.DeviceDesc		    = "DE-ABM5 Contactless Reader"
+USB\VID_1DB2&PID_0651.DeviceDesc		    = "DE-ABCM Contactless Reader"
+USB\VID_1DB2&PID_0701&MI_00.DeviceDesc		= "DE-600F Contactless Reader"
+;contact-----------------------------------------------------------------------------------
+
+USB\VID_1DB2&PID_0631&MI_01.DeviceDesc_Contact	= "DE-620 Contact Reader"
+USB\VID_1DB2&PID_0637&MI_01.DeviceDesc_Contact	= "DE-620L Contact Reader"
+USB\VID_1DB2&PID_063C&MI_01.DeviceDesc_Contact	= "DE-620R Contact Reader"
+USB\VID_1DB2&PID_0641&MI_01.DeviceDesc_Contact	= "DE-ABM5 Contact Reader"
+USB\VID_1DB2&PID_0701&MI_01.DeviceDesc_Contact	= "DE-600F Contact Reader"
+
+
+;SAM-----------------------------------------------------------------------------------
+
+USB\VID_1DB2&PID_0631&MI_02.DeviceDesc_Sam	= "DE-620 Sam Reader"
+USB\VID_1DB2&PID_063C&MI_02.DeviceDesc_Sam	= "DE-620R Sam Reader"
+USB\VID_1DB2&PID_0641&MI_02.DeviceDesc_Sam	= "DE-ABM5 Sam Reader"
+USB\VID_1DB2&PID_0701&MI_02.DeviceDesc_Sam	= "DE-600F Sam Reader"
+;-----------------------------------------------------------------------------------
+
+ClassName 			= "Smart Card Readers"
+Vendor				= "DUALI"
+Reader				= "DE-PCSC"
+Timeout				= "60"		;timeout in second
+CmdMode				= "02"		;02-PCSC 01-EMV 00-Auto
+CardType			= "04"		;Please see below for full description

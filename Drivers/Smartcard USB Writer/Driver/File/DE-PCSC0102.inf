@@ -1,0 +1,85 @@
+; DE-PCSC0102.INF
+; Copyright (c) 2009 Duali.Inc
+
+[Version]
+DriverVer=09/21/2009,1.0.0.1
+Signature="$Windows NT$"
+Class=SmartCardReader
+ClassGuid={50DD5230-BA8A-11D1-BF5D-0000F805F530}
+Provider=%DUALI%
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SmartCardReaderClassReg 
+
+[SmartCardReaderClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-25
+HKLM,"\Software\Microsoft\Cryptography\Calais\Readers",,,
+
+[Manufacturer]
+%DUALI%=DUALI
+
+; ================= De600 pcsc =====================
+
+[DUALI]
+; DisplayName       Section     DeviceId
+; -----------       -------     --------
+%DUALI.DeviceDesc% = DUALI.Install, USB\VID_1DB2&PID_0102
+
+[DUALI.Install.NT]
+AddReg          = DUALI.Install.AddReg
+CopyFiles	= DUALI.Install.CopyFiles
+
+[DUALI.Install.AddReg]
+HKR,, AdapterType, 0, "0100"
+HKR,,"VendorName",0,%Vendor%
+HKR,,"IFDName",0,%Reader%
+HKR,,"ReadTimeout",0,%Timeout%
+HKR,,"CardType",0,%CardType%
+HKR,,"CommandMode",0,%CmdMode%
+HKLM,"System\CurrentControlSet\Services\SCardSvr","Start", 0x00010001,2
+
+[DUALI.Install.CopyFiles]
+DE-PCSC0102.sys,,,2
+
+[DUALI.Install.NT.Services]
+AddService = DDE-PCSC0102-SERVICE, 2, DUALI.Service, DUALI.EventLog
+
+[DUALI.Service]
+DisplayName     = %DUALI.DeviceDesc%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\DE-PCSC0102.sys
+
+[DUALI.EventLog]
+AddReg = DUALI.AddEventLog.reg
+
+[DUALI.AddEventLog.reg]
+HKR,, EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\drivers\DE-PCSC0102.sys"
+HKR,, TypesSupported,   0x00010001, 7
+
+[SourceDisksNames]
+1 = "DE-PCSC QPASSM Module",,,""
+
+[SourceDisksFiles]
+DE-PCSC0102.sys = 1
+
+[DestinationDirs]
+DUALI.Install.CopyFiles = 10,\System32\Drivers
+
+
+; ================= Strings =====================
+
+[Strings]
+Msft			= "DE-PCSC QPASSM Module"
+DUALI			= "DUALI"
+DUALI.DeviceDesc	= "DE-PCSC QPASSM Module"
+ClassName 		= "Smart Card Readers"
+Vendor			= "DUALI"
+Reader			= "DE-PCSC"
+Timeout			= "60"		;timeout in second
+CmdMode			= "02"		;02-PCSC 01-EMV 00-Auto
+CardType		= "04"		;Please see below for full description

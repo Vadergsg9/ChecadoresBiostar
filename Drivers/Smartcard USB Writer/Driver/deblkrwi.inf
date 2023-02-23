@@ -1,0 +1,104 @@
+
+
+[Version]
+Signature="$CHICAGO$"
+Class=USB
+ClassGUID={36FC9E60-C465-11CF-8056-444553540000}
+provider=%MSFT%
+DriverVer=10/14/2009,2.3.0.1
+
+
+[Manufacturer]
+%MfgName%=Microsoft
+
+[Microsoft]
+%USB\VID_DEDE&PID_0600.DeviceDesc%=BULKUSB.Dev, USB\VID_DEDE&PID_0600
+%USB\VID_DEDE&PID_0601.DeviceDesc%=BULKUSB.Dev, USB\VID_DEDE&PID_0601
+%USB\VID_DEDE&PID_0603.DeviceDesc%=BULKUSB.Dev, USB\VID_DEDE&PID_0603
+%USB\VID_DEDE&PID_0604.DeviceDesc%=BULKUSB.Dev, USB\VID_DEDE&PID_0604
+
+
+
+%USB\VID_1DB2&PID_0401.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0401
+%USB\VID_1DB2&PID_0620.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0620
+%USB\VID_1DB2&PID_0630.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0630
+%USB\VID_1DB2&PID_0635.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0635
+%USB\VID_1DB2&PID_063A.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_063A
+%USB\VID_1DB2&PID_0640.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0640
+%USB\VID_1DB2&PID_0650.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0650
+%USB\VID_1DB2&PID_0660.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0660
+%USB\VID_1DB2&PID_0670.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0670
+%USB\VID_1DB2&PID_0700.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_0700
+%USB\VID_1DB2&PID_7210.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_7210
+
+%USB\VID_1DB2&PID_FFF0.DeviceDesc%=BULKUSB.Dev, USB\VID_1DB2&PID_FFF0
+
+[ControlFlags]
+ExcludeFromSelect=USB\VID_1DB2&PID_0630
+
+[SourceDisksFiles]
+deblkrwi.sys = 1
+
+[SourceDisksNames]
+1="Duali Usb Installation Disk",,,
+
+;[PreCopySection]
+;HKR,,NoSetupUI,,1
+
+[DestinationDirs]
+BULKUSB.Files.Ext = 10,System32\Drivers
+
+[BULKUSB.Dev]
+CopyFiles=BULKUSB.Files.Ext
+AddReg=BULKUSB.AddReg
+
+[BULKUSB.Dev.NT]
+CopyFiles=BULKUSB.Files.Ext
+AddReg=BULKUSB.AddReg
+
+[BULKUSB.Dev.NT.Services]
+Addservice = BULKUSB, 0x00000002, BULKUSB.AddService
+
+[BULKUSB.AddService]
+DisplayName    = %BULKUSB.SvcDesc%
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %10%\System32\Drivers\deblkrwi.sys
+LoadOrderGroup = Base
+
+[BULKUSB.AddReg]
+HKR,,DevLoader,,*ntkern
+HKR,,NTMPDriver,,"deblkrwi.sys"
+HKLM,"System\Currentcontrolset\Services\BulkUsb\Parameters","MaximumTransferSize",0x10001,65536
+HKLM,"System\Currentcontrolset\Services\BulkUsb\Parameters","DebugLevel",0x10001,2
+HKLM,"System\Currentcontrolset\services\BulkUsb\Parameters","BulkUsbEnable",0x10001,1
+
+[BULKUSB.Files.Ext]
+deblkrwi.sys
+
+
+;---------------------------------------------------------------;
+
+[Strings]
+MSFT="Duali Inc. Korea"
+MfgName="Duali"
+USB\VID_DEDE&PID_0600.DeviceDesc="DualEye-600M Smart Card Reader V2.1"
+USB\VID_DEDE&PID_0601.DeviceDesc="DualEye-601r Smart Card Reader V2.1"
+USB\VID_DEDE&PID_0603.DeviceDesc="DualEye-600S Smart Card Reader V2.1"
+USB\VID_DEDE&PID_0604.DeviceDesc="DualEye-600S PCSC TEST"
+USB\VID_1DB2&PID_0401.DeviceDesc="iPR-101 Mobile Animal Reader"
+USB\VID_1DB2&PID_0620.DeviceDesc="DE-620 PCSC SmartCard Reader"
+USB\VID_1DB2&PID_0630.DeviceDesc="DE-620 SmartCard Reader"
+USB\VID_1DB2&PID_0635.DeviceDesc="DE-620L SmartCard Reader"
+USB\VID_1DB2&PID_063A.DeviceDesc="DE-620R SmartCard Reader"
+USB\VID_1DB2&PID_0640.DeviceDesc="DE-ABM5 SmartCard Module"
+USB\VID_1DB2&PID_0650.DeviceDesc="DE-ABCM SmartCard Module"
+USB\VID_1DB2&PID_0660.DeviceDesc="DE-AFCMI SmartCard Reader"
+USB\VID_1DB2&PID_0670.DeviceDesc="DE-EPASS SmartCard Reader"
+USB\VID_1DB2&PID_0700.DeviceDesc="DE-600F Finger Print Smart Card Reader"
+USB\VID_1DB2&PID_7210.DeviceDesc="DE-CAD SmartCard Reader"
+USB\VID_1DB2&PID_FFF0.DeviceDesc="DELCL-SAM2 Board "
+BULKUSB.SvcDesc="Duali USB VENDOR COMMUNICATION  DRIVER"
+ClassName="Smart Card Readers"
+
